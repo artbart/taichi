@@ -154,7 +154,8 @@
     wrap.appendChild(tog);
     const field = el("div", "field");
     const inp = el("input"); inp.type = "number"; inp.inputMode = "decimal";
-    inp.placeholder = scr.field; inp.value = S.answers[scr.id] || "";
+    inp.placeholder = ({ height: "Height", weight: "Current weight", goal_weight: "Goal weight" }[scr.field] || "Enter a number");
+    inp.value = S.answers[scr.id] || "";
     field.appendChild(inp); field.appendChild(el("span", "u", unit));
     wrap.appendChild(field);
     const fb = el("div"); wrap.appendChild(fb);
