@@ -313,11 +313,39 @@
       "By choosing your age and continuing you agree to our Terms of Service and Privacy Policy."));
   }
 
+  // ---- QA shortcut: auto-answer everything and jump to checkout ----
+  // Usage: quiz.html?autotest=1  (also accepts ?test=1 or ?funnel=test, optional &email=)
+  function autotestFill() {
+    const qp = new URLSearchParams(location.search);
+    const ages = ["40-49", "50-59", "60-69", "70-80"];
+    S = window.CTC ? (window.CTC.reset(), window.CTC.get()) : S;
+    S.age_band = ages[Math.floor(Math.random() * ages.length)];
+    S.funnel = "chair-taichi"; S.status = "checkout";
+    S.height_cm = 158 + Math.floor(Math.random() * 22);
+    S.weight_kg = 62 + Math.floor(Math.random() * 38);
+    S.goal_weight_kg = Math.max(50, S.weight_kg - (5 + Math.floor(Math.random() * 12)));
+    S.bmi = +(S.weight_kg / Math.pow(S.height_cm / 100, 2)).toFixed(1);
+    if (qp.get("email")) S.email = qp.get("email");
+    S.selected_plan = "4w"; S.answers = {};
+    const rnd = (a) => a[Math.floor(Math.random() * a.length)];
+    FUNNEL.screens.forEach(scr => {
+      if (scr.type === "single") S.answers[scr.id] = rnd(scr.options).value;
+      else if (scr.type === "multi") { const n = 1 + Math.floor(Math.random() * Math.min(2, scr.options.length)); S.answers[scr.id] = [...scr.options].sort(() => Math.random() - 0.5).slice(0, n).map(o => o.value); }
+      else if (scr.type === "input") S.answers[scr.id] = String(scr.field === "height" ? S.height_cm : scr.field === "weight" ? S.weight_kg : S.goal_weight_kg);
+    });
+    // jump straight to the email capture step (then name -> goals -> checkout work as normal)
+    const emailIdx = FUNNEL.screens.findIndex(s => s.type === "email");
+    S.index = emailIdx >= 0 ? emailIdx : 0; S.status = "in_progress"; save();
+    render();
+  }
+
   // ---- back button + boot ----
   const back = $("#back"); if (back) back.onclick = () => {
     if (!S.age_band) { window.location.href = "index.html"; return; }
     if (S.index === 0) { S.age_band = null; save(); ageGate(); return; }
     go(-1);
   };
-  if (!S.age_band) ageGate(); else render();
+  const _qp = new URLSearchParams(location.search);
+  if (_qp.get("autotest") !== null || _qp.get("test") !== null || _qp.get("funnel") === "test") autotestFill();
+  else if (!S.age_band) ageGate(); else render();
 })();
