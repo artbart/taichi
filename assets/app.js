@@ -1,0 +1,314 @@
+/* Chair Tai Chi funnel engine.
+ * Renders FUNNEL.screens one at a time, persists answers to localStorage in a shape
+ * that maps directly to the planned Supabase `quiz_sessions` row. No backend calls yet —
+ * the submit hooks are stubbed (see saveSession / TODO markers) for later wiring.
+ */
+(function () {
+  const KEY = "ctc_quiz_session";
+  const F = window.FUNNEL;
+
+  // ---- session state ----
+  function uuid() {
+    return (crypto.randomUUID && crypto.randomUUID()) ||
+      "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
+        const r = Math.random() * 16 | 0; return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
+      });
+  }
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch { return null; }
+  }
+  function fresh() {
+    return { id: uuid(), funnel: F.product, created_at: new Date().toISOString(),
+      age_band: null, answers: {}, index: 0, email: null, name: null,
+      height_cm: null, weight_kg: null, goal_weight_kg: null, bmi: null,
+      selected_plan: null, status: "in_progress" };
+  }
+  let S = load() || fresh();
+  function save() { localStorage.setItem(KEY, JSON.stringify(S)); }
+  // expose for checkout page + future Supabase POST
+  window.CTC = {
+    get: () => S,
+    reset: () => { S = fresh(); save(); },
+    // TODO: replace with POST to Supabase edge fn `submit-quiz` (creates quiz_sessions row)
+    saveSession: () => { save(); /* await supabase.from('quiz_sessions').upsert(toRow(S)) */ },
+  };
+
+  // ---- helpers ----
+  const $ = (s, r = document) => r.querySelector(s);
+  const el = (t, c, h) => { const e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; };
+  function toCm(v, u) { return u === "ft" ? Math.round(v * 30.48) : v; }      // v in ft (decimal) -> cm
+  function toKg(v, u) { return u === "lb" ? +(v / 2.20462).toFixed(1) : v; }
+  function bmi() { if (!S.height_cm || !S.weight_kg) return null; const m = S.height_cm / 100; return +(S.weight_kg / (m * m)).toFixed(1); }
+  function bmiCategory(b) { return b < 18.5 ? "underweight" : b < 25 ? "a healthy weight" : b < 30 ? "in the overweight range" : "in the obese range"; }
+
+  // screens excluding the capture trio for progress math
+  const total = F.screens.length;
+  function setProgress() {
+    const pct = Math.min(100, Math.round((S.index) / total * 100));
+    const bar = $("#progress > i"); if (bar) bar.style.width = pct + "%";
+    const scr = F.screens[S.index];
+    const sec = $("#section"); if (sec) sec.textContent = (scr && scr.section) || "";
+  }
+
+  function go(delta) {
+    S.index = Math.max(0, Math.min(F.screens.length, S.index + delta));
+    save();
+    if (S.index >= F.screens.length) { window.location.href = "checkout.html"; return; }
+    render();
+  }
+
+  // ---- renderers ----
+  function render() {
+    const root = $("#step"); root.innerHTML = "";
+    setProgress();
+    const scr = F.screens[S.index];
+    if (!scr) { window.location.href = "checkout.html"; return; }
+    ({ single: rSingle, multi: rMulti, input: rInput, info: rInfo,
+       loader: rLoader, email: rEmail, name: rName, goals: rGoals }[scr.type] || rInfo)(scr, root);
+    window.scrollTo(0, 0);
+  }
+
+  function head(scr, root) {
+    if (scr.q) root.appendChild(el("h1", "q", personalize(scr.q)));
+    if (scr.statement) root.appendChild(el("div", "statement", scr.statement));
+    if (scr.sub) root.appendChild(el("p", "sub", scr.sub));
+  }
+  function personalize(t) {
+    const band = S.age_band ? S.age_band.replace(/-/, "–") : "";
+    const decade = band ? band.split(/[-–]/)[0].replace(/.$/, "0") + "s" : "your age";
+    return t.replace("{decade}", decade).replace("{name}", S.name || "");
+  }
+
+  function picsum(seed, w, h) { return `https://picsum.photos/seed/${encodeURIComponent("ctc-" + seed)}/${w}/${h}`; }
+  function imgEl(cls, seed, w, h) {
+    const span = el("span", cls);
+    const g = document.createElement("img"); g.loading = "lazy"; g.alt = ""; g.src = picsum(seed, w, h);
+    span.appendChild(g); return span;
+  }
+
+  function optRow(scr, o, selected, onClick) {
+    const row = el("button", "opt" + (selected ? " sel" : ""));
+    if (scr.layout === "cards") {
+      row.appendChild(imgEl("cimg", scr.id + "-" + o.value, 400, 300));
+    } else if (scr.type === "multi" && scr.photos) {
+      row.appendChild(imgEl("thumb", scr.id + "-" + o.value, 160, 160));
+    } else if (o.emoji) {
+      row.appendChild(el("span", "emoji", o.emoji));
+    }
+    row.appendChild(el("span", "lab", o.label));
+    if (scr.type === "multi") row.appendChild(el("span", "check", selected ? "✓" : ""));
+    row.onclick = () => onClick(row);
+    return row;
+  }
+
+  function rSingle(scr, root) {
+    head(scr, root);
+    const wrapCls = scr.layout === "cards" ? "grid" : scr.layout === "ld" ? "ld" : "opts";
+    if (scr.layout === "ld" && scr.statement) {
+      // statement already shown; add a visual card
+      const card = el("div", "ld-card", scr.statement);
+      root.insertBefore(card, root.querySelector(".statement").nextSibling || null);
+    }
+    const box = el("div", wrapCls);
+    scr.options.forEach(o => box.appendChild(optRow(scr, o, false, () => {
+      S.answers[scr.id] = o.value; save();
+      if (scr.safetyNote) { showSafety(scr, root); }
+      else go(1);
+    })));
+    root.appendChild(box);
+  }
+
+  function showSafety(scr, root) {
+    const note = el("div", "feedback", scr.safetyNote);
+    root.appendChild(note);
+    ctaBar("Continue", () => go(1));
+  }
+
+  function rMulti(scr, root) {
+    head(scr, root);
+    const cur = new Set(S.answers[scr.id] || []);
+    const box = el("div", "opts");
+    const opts = scr.options.concat(scr.noneValue ? [{ value: scr.noneValue, label: scr.noneLabel || "None" }] : []);
+    opts.forEach(o => {
+      const sel = cur.has(o.value);
+      box.appendChild(optRow(scr, o, sel, (row) => {
+        if (o.value === scr.noneValue) { cur.clear(); cur.add(o.value); }
+        else { cur.delete(scr.noneValue); cur.has(o.value) ? cur.delete(o.value) : cur.add(o.value); }
+        S.answers[scr.id] = [...cur]; save(); render();
+      }));
+    });
+    root.appendChild(box);
+    ctaBar("Continue", () => go(1), cur.size === 0);
+  }
+
+  function rInput(scr, root) {
+    head(scr, root);
+    let unit = S.answers[scr.id + "_unit"] || scr.units[0];
+    const wrap = el("div", "inputwrap");
+    const tog = el("div", "unit-toggle");
+    scr.units.forEach(u => {
+      const b = el("button", u === unit ? "on" : "", u);
+      b.onclick = () => { unit = u; S.answers[scr.id + "_unit"] = u; save(); rInput(scr, (root.innerHTML = "", root)); };
+      tog.appendChild(b);
+    });
+    wrap.appendChild(tog);
+    const field = el("div", "field");
+    const inp = el("input"); inp.type = "number"; inp.inputMode = "decimal";
+    inp.placeholder = scr.field; inp.value = S.answers[scr.id] || "";
+    field.appendChild(inp); field.appendChild(el("span", "u", unit));
+    wrap.appendChild(field);
+    const fb = el("div"); wrap.appendChild(fb);
+    root.appendChild(wrap);
+
+    function valid() { const v = parseFloat(inp.value); return v > 0; }
+    function commit() {
+      const v = parseFloat(inp.value); if (!v) return;
+      S.answers[scr.id] = inp.value;
+      if (scr.field === "height") S.height_cm = toCm(v, unit);
+      if (scr.field === "weight") S.weight_kg = toKg(v, unit);
+      if (scr.field === "goal_weight") S.goal_weight_kg = toKg(v, unit);
+      S.bmi = bmi(); save();
+      if (scr.computeBMI && S.bmi) {
+        fb.innerHTML = "";
+        fb.appendChild(el("div", "feedback", `Your BMI is <b>${S.bmi}</b> — ${bmiCategory(S.bmi)}. We'll use this to set a healthy, realistic pace.`));
+      }
+    }
+    const btn = ctaBar("Continue", () => { commit(); if (valid()) go(1); }, !valid());
+    inp.oninput = () => { commit(); btn.disabled = !valid(); };
+    inp.onkeydown = (e) => { if (e.key === "Enter" && valid()) { commit(); go(1); } };
+    setTimeout(() => inp.focus(), 50);
+  }
+
+  function rInfo(scr, root) {
+    if (!scr.chart) root.appendChild(imgEl("info-photo", "info-" + scr.id, 800, 500));
+    root.appendChild(el("h1", "q", personalize(scr.title)));
+    if (scr.chart) root.appendChild(chartEl());
+    root.appendChild(el("p", "info-body", personalize(scr.body)));
+    if (scr.bullets) {
+      const ul = el("ul", "bullets"); scr.bullets.forEach(b => ul.appendChild(el("li", "", b))); root.appendChild(ul);
+    }
+    ctaBar("Continue", () => go(1));
+  }
+  function illustrationFor(scr) {
+    const m = { intro_encourage: "🪑", intro_solution: "🌿", intro_plan: "🎯", intro_effective: "💪",
+      intro_eligible: "✅", intro_safe: "🛡️", intro_home: "🏠", intro_lowdose: "⏱️", intro_stress: "🌬️",
+      intro_focus: "🙂", intro_sleep: "😴", intro_nutrition: "🥗", intro_almost: "🎉", intro_sustainable: "🌱",
+      intro_paced: "🎚️" };
+    return m[scr.id] || "🌿";
+  }
+  function chartEl() {
+    const now = S.weight_kg || 78, goal = S.goal_weight_kg || Math.round((S.weight_kg || 78) * 0.85);
+    const box = el("div", "chartbox");
+    box.innerHTML = `<svg viewBox="0 0 320 140" preserveAspectRatio="none">
+      <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5a9e6f" stop-opacity=".35"/><stop offset="1" stop-color="#5a9e6f" stop-opacity="0"/></linearGradient></defs>
+      <path d="M10,30 C110,40 180,95 310,110 L310,140 L10,140 Z" fill="url(#g)"/>
+      <path d="M10,30 C110,40 180,95 310,110" fill="none" stroke="#5a9e6f" stroke-width="3"/>
+      <circle cx="10" cy="30" r="5" fill="#5a9e6f"/><circle cx="310" cy="110" r="5" fill="#ef6a6a"/>
+      </svg>
+      <div class="chartlabels"><span>Now · ${now}kg</span><span>Goal · ${goal}kg</span></div>`;
+    return box;
+  }
+
+  function rLoader(scr, root) {
+    root.appendChild(el("h1", "q", scr.title));
+    const list = el("div", "loader-list");
+    scr.steps.forEach((s, i) => {
+      const row = el("div", "loader-row");
+      row.innerHTML = `<div class="lr-top"><span>${s}</span><span id="p${i}">0%</span></div><div class="bar"><i id="b${i}"></i></div>`;
+      list.appendChild(row);
+    });
+    root.appendChild(list);
+    const tlist = el("div", "testimonials");
+    ["“I didn't think a seated routine could do much — two weeks in, I felt steadier on my feet.”|Margaret, 64",
+     "“Ten minutes a day I can actually keep up with. That's the difference.”|Joan, 58",
+     "“My balance and my mood both improved. I look forward to it now.”|Patricia, 67"]
+      .forEach(t => { const [q, a] = t.split("|"); tlist.appendChild(el("div", "testi", `${q}<b>${a}</b>`)); });
+    root.appendChild(tlist);
+    // animate
+    scr.steps.forEach((s, i) => {
+      let p = 0; const target = 100; const start = i * 500;
+      setTimeout(() => { const t = setInterval(() => { p += 7; if (p >= target) { p = target; clearInterval(t);
+        if (i === scr.steps.length - 1) setTimeout(() => go(1), 500); }
+        $("#b" + i).style.width = p + "%"; $("#p" + i).textContent = p + "%"; }, 60); }, start);
+    });
+  }
+
+  function rEmail(scr, root) {
+    root.appendChild(el("div", "info-ill", "📋"));
+    root.appendChild(el("h1", "q", scr.title));
+    root.appendChild(el("p", "sub", scr.sub));
+    const inp = el("input", "text-field"); inp.type = "email"; inp.placeholder = "you@example.com";
+    inp.value = S.email || ""; root.appendChild(inp);
+    root.appendChild(el("p", "consent",
+      "By continuing you agree to receive emails about your plan. You can unsubscribe anytime. See our Terms and Privacy Policy."));
+    ctaBar("See my plan", () => {
+      const v = inp.value.trim(); if (!/^\S+@\S+\.\S+$/.test(v)) { inp.focus(); inp.style.borderColor = "#ef6a6a"; return; }
+      S.email = v; S.status = "email_captured"; window.CTC.saveSession();
+      if (window.API) API.submitQuiz(S);   // save lead to Supabase (quiz_sessions)
+      go(1);
+    });
+    setTimeout(() => inp.focus(), 50);
+  }
+
+  function rName(scr, root) {
+    root.appendChild(el("h1", "q", scr.title));
+    const inp = el("input", "text-field"); inp.type = "text"; inp.placeholder = "First name";
+    inp.value = S.name || ""; root.appendChild(inp);
+    ctaBar("Continue", () => { const v = inp.value.trim(); if (!v) { inp.focus(); return; } S.name = v; save(); go(1); });
+    setTimeout(() => inp.focus(), 50);
+  }
+
+  function rGoals(scr, root) {
+    const goal = S.goal_weight_kg || "—", now = S.weight_kg || "—";
+    root.appendChild(el("h1", "q", `${S.name ? S.name + ", your" : "Your"} plan is ready`));
+    root.appendChild(chartEl());
+    const ul = el("ul", "bullets goals-bullets");
+    ["A personalized seated Chair Tai Chi routine",
+     "Short, joint-friendly daily sessions",
+     "Balance, mobility and gentle strength work",
+     "Progress tracking and simple nutrition tips",
+     "A 24/7 wellness assistant for questions"].forEach(b => ul.appendChild(el("li", "", b)));
+    root.appendChild(ul);
+    S.status = "completed"; window.CTC.saveSession();
+    ctaBar("Get my plan", () => { window.location.href = "checkout.html"; });
+  }
+
+  // ---- sticky CTA ----
+  function ctaBar(label, onClick, disabled) {
+    const bar = el("div", "cta-bar");
+    const inner = el("div", "cta-inner");
+    const b = el("button", "btn", label); b.disabled = !!disabled; b.onclick = onClick;
+    inner.appendChild(b); bar.appendChild(inner); $("#step").appendChild(bar);
+    return b;
+  }
+
+  // ---- age gate (first screen of the quiz) ----
+  function ageGate() {
+    const root = $("#step"); root.innerHTML = "";
+    const bar = $("#progress > i"); if (bar) bar.style.width = "0%";
+    const sec = $("#section"); if (sec) sec.textContent = "";
+    root.appendChild(el("h1", "q", "Chair Tai Chi Workouts"));
+    root.appendChild(el("p", "sub", "Select your age to get your free personalized plan"));
+    const grid = el("div", "grid");
+    [["40-49", "Age 40–49"], ["50-59", "Age 50–59"], ["60-69", "Age 60–69"], ["70-80", "Age 70–80"]]
+      .forEach(([val, label]) => {
+        const card = el("button", "opt");
+        card.appendChild(imgEl("cimg", "age-" + val, 400, 300));
+        card.appendChild(el("span", "lab", label));
+        card.onclick = () => { S.age_band = val; S.index = 0; S.status = "in_progress"; save(); render(); };
+        grid.appendChild(card);
+      });
+    root.appendChild(grid);
+    root.appendChild(el("p", "consent",
+      "By choosing your age and continuing you agree to our Terms of Service and Privacy Policy."));
+  }
+
+  // ---- back button + boot ----
+  const back = $("#back"); if (back) back.onclick = () => {
+    if (!S.age_band) { window.location.href = "index.html"; return; }
+    if (S.index === 0) { S.age_band = null; save(); ageGate(); return; }
+    go(-1);
+  };
+  if (!S.age_band) ageGate(); else render();
+})();

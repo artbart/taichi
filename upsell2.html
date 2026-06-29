@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Improve more areas</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="topbar"><span class="brand" style="margin:0 auto">Chair&nbsp;Tai&nbsp;Chi</span></header>
+  <div id="stephdr"></div>
+
+  <main>
+    <div class="offer-head">Your answers showed areas <span class="hl-green">worth supporting</span></div>
+    <h2 class="q" style="font-size:19px;text-align:left;max-width:var(--maxw);margin:0 auto 6px;padding:0 20px">What would you like to improve?</h2>
+
+    <div id="guides"></div>
+
+    <div class="cta-bar" style="position:static;background:none;margin-top:8px">
+      <div class="cta-inner"><button class="btn" id="add">Add to my plan</button></div>
+    </div>
+    <button class="decline" id="skip">Continue without guides</button>
+    <p class="fineprint">Selected add-ons are charged once to your account. Refundable per our refund policy.</p>
+  </main>
+
+  <script src="assets/flow.js"></script>
+  <script>
+    const GUIDES = [
+      { id:"sleep", icon:"🛏️", gt:"Better sleep", gd:"Gentle routines for deeper, more restful nights", price:18.99 },
+      { id:"eating", icon:"🍩", gt:"Eating without guilt", gd:"Calm your relationship with food, no rules", price:18.99 },
+      { id:"aging", icon:"⏳", gt:"Aging gracefully", gd:"Simple habits for staying strong and mobile", price:18.99 },
+    ];
+    const BUNDLE = { id:"all_guides", icon:"🧩", gt:"All of the above", gd:"Every guide, one discounted bundle", old:54.99, price:38.99, off:"29% OFF", rec:true };
+    let selected = "all_guides";
+
+    function render() {
+      const box = document.getElementById("guides");
+      const rowG = g => `<div class="guide ${selected===g.id?"sel":""}" data-id="${g.id}">
+        <span class="ic">${g.icon}</span>
+        <span class="gtext"><span class="gt">${g.gt}</span><span class="gd">${g.gd}</span></span>
+        <span class="gprice">${g.old?`<span class="old">€${g.old}</span>`:""}€${g.price.toFixed(2)}${g.off?`<span class="tag-off">${g.off}</span>`:""}</span>
+        ${g.rec?'<span class="tag-rec">RECOMMENDED</span>':""}</div>`;
+      box.innerHTML = GUIDES.map(rowG).join("") + rowG(BUNDLE);
+      box.querySelectorAll(".guide").forEach(el => el.onclick = () => { selected = el.dataset.id; render(); });
+    }
+    render();
+    document.getElementById("stephdr").innerHTML = FLOW.stepHeader("offer");
+
+    document.getElementById("add").onclick = () => {
+      const all = [...GUIDES, BUNDLE]; const g = all.find(x => x.id === selected);
+      FLOW.addItem({ id:"guide_"+g.id, label:g.gt, amount:g.price, recurring:false });
+      location.href = "upsell3.html";
+    };
+    document.getElementById("skip").onclick = () => { location.href = "upsell3.html"; };
+  </script>
+</body>
+</html>

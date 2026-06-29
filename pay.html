@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Chair Tai Chi — Secure checkout</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="topbar"><span class="brand" style="margin:0 auto">Chair&nbsp;Tai&nbsp;Chi</span></header>
+  <div id="stephdr"></div>
+
+  <main>
+    <div class="test-banner">🔒 TEST MODE — this is an imitation checkout. No card is charged. Stripe wires in here later.</div>
+
+    <h1 class="q">Secure checkout</h1>
+
+    <div class="pay-card" id="payArea">
+      <div class="order-row"><span id="planName">Plan</span><span id="planPrice">€0.00</span></div>
+      <div class="order-row tot"><span>Total today</span><span id="total">€0.00</span></div>
+
+      <label>Email</label>
+      <input id="email" type="email" placeholder="you@example.com">
+      <label>Card number</label>
+      <input id="card" inputmode="numeric" placeholder="4242 4242 4242 4242" value="4242 4242 4242 4242">
+      <div class="pay-row">
+        <div><label>Expiry</label><input id="exp" placeholder="12 / 28" value="12 / 28"></div>
+        <div><label>CVC</label><input id="cvc" inputmode="numeric" placeholder="123" value="123"></div>
+      </div>
+    </div>
+
+    <div class="cta-bar" style="position:static;background:none">
+      <div class="cta-inner"><button class="btn" id="pay">Pay &amp; continue</button></div>
+    </div>
+    <p class="fineprint" id="renew"></p>
+  </main>
+
+  <script src="assets/flow.js"></script>
+  <script>
+    const PLANS = { "1w":{name:"1-week plan",intro:5.19,renew:21.99,weeks:1},
+      "4w":{name:"4-week plan",intro:9.99,renew:49.95,weeks:4},
+      "12w":{name:"12-week plan",intro:19.99,renew:84.95,weeks:12} };
+    const s = FLOW.get();
+    const plan = PLANS[s.selected_plan] || PLANS["4w"];
+    document.getElementById("stephdr").innerHTML = FLOW.stepHeader("setup");
+    document.getElementById("planName").textContent = plan.name + " (introductory)";
+    document.getElementById("planPrice").textContent = FLOW.money(plan.intro);
+    document.getElementById("total").textContent = FLOW.money(plan.intro);
+    document.getElementById("email").value = s.email || "";
+    document.getElementById("renew").textContent =
+      `Introductory ${plan.name} at ${FLOW.money(plan.intro)} today. Renews at ${FLOW.money(plan.renew)} every ${plan.weeks} week(s) unless cancelled. Cancel anytime in your account.`;
+
+    document.getElementById("pay").onclick = () => {
+      const s2 = FLOW.get();
+      s2.email = document.getElementById("email").value || s2.email;
+      s2.order = [{ id:"base_plan", label: plan.name, amount: plan.intro, recurring:true }];
+      s2.paid = true; s2.status = "paid"; FLOW.save(s2);
+      // imitate Stripe processing
+      document.getElementById("payArea").innerHTML = '<div class="spinner"></div><p class="sub">Processing your payment…</p>';
+      document.getElementById("pay").disabled = true;
+      // TODO: replace with real Stripe Checkout / PaymentIntent confirm
+      setTimeout(() => { location.href = "upsell1.html"; }, 1400);
+    };
+  </script>
+</body>
+</html>

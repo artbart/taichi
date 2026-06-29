@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Chair Tai Chi — Your plan</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="topbar"><span class="brand">Chair&nbsp;Tai&nbsp;Chi</span></header>
+  <div class="timer" id="timer">Introductory offer expires in 09:59</div>
+
+  <main class="co-section">
+    <h1 class="q" id="headline">Your plan is ready</h1>
+
+    <div class="summary-card">
+      <div class="ba">
+        <div class="col"><h4>NOW</h4><div class="metric">Energy: <b>Low</b></div><div class="metric">Balance: <b>Could improve</b></div></div>
+        <div class="col"><h4>GOAL</h4><div class="metric">Energy: <b>High</b></div><div class="metric">Balance: <b>Steadier</b></div></div>
+      </div>
+    </div>
+
+    <div class="summary-card" id="personal">
+      <strong>Your personal summary</strong>
+      <div id="personalBody" class="note" style="margin-top:10px"></div>
+    </div>
+
+    <h2 class="q" style="font-size:20px">Your plan includes</h2>
+    <ul class="bullets" style="max-width:none">
+      <li>Personalized seated Chair Tai Chi routine</li>
+      <li>7–15 minute low-impact daily sessions</li>
+      <li>Beginner-friendly balance &amp; mobility work</li>
+      <li>Joint-friendly, fully seated movement</li>
+      <li>Progress tracking</li>
+      <li>Simple, optional nutrition guidance</li>
+      <li>24/7 wellness assistant</li>
+    </ul>
+
+    <h2 class="q" style="font-size:20px;margin-top:24px">Choose your plan</h2>
+    <div id="plans"></div>
+
+    <p class="guarantee">30-day money-back guarantee</p>
+    <div class="cta-bar" style="position:static;background:none;padding:0 0 8px">
+      <div class="cta-inner"><button class="btn" id="getPlan">Get my plan</button></div>
+    </div>
+
+    <h2 class="q" style="font-size:20px;margin-top:30px">What members say</h2>
+    <div class="review">“I can do it from my armchair, and I genuinely feel steadier walking around the house.”<b>Margaret, 64</b></div>
+    <div class="review">“Short sessions I can keep up with. My posture and mood have both improved.”<b>Patricia, 67</b></div>
+    <div class="review">“Gentle but it works. My joints feel better and I sleep more soundly.”<b>Joan, 58</b></div>
+
+    <p class="note" id="renewNote"></p>
+  </main>
+
+  <p class="disclaimer">This is a general wellness and movement program. It is not medical advice and is not
+    intended to diagnose, treat, cure, or prevent any disease. Talk to a healthcare professional before starting
+    a new activity program, especially if you have a medical condition.</p>
+
+  <script>
+    // Pricing mirrors the captured chair-taichi funnel (intro -> auto-renew). EUR.
+    const PLANS = [
+      { id: "1w",  name: "1-week plan",  old: "21.99", intro: "5.19",  perday: "0.74" },
+      { id: "4w",  name: "4-week plan",  old: "49.95", intro: "9.99",  perday: "0.36", popular: true },
+      { id: "12w", name: "12-week plan", old: "84.95", intro: "19.99", perday: "0.24" },
+    ];
+    let session = {}; try { session = JSON.parse(localStorage.getItem("ctc_quiz_session")) || {}; } catch (e) {}
+    let selected = "4w";
+
+    // headline + personal summary
+    if (session.name) document.getElementById("headline").textContent = session.name + ", your plan is ready";
+    const pb = document.getElementById("personalBody");
+    const bits = [];
+    if (session.bmi) bits.push("Current BMI: <b>" + session.bmi + "</b>");
+    if (session.age_band) bits.push("Age group: <b>" + session.age_band.replace('-', '–') + "</b>");
+    if (session.weight_kg && session.goal_weight_kg) bits.push("Goal: <b>" + session.weight_kg + "kg → " + session.goal_weight_kg + "kg</b>");
+    bits.push("Recommended session length: <b>7–15 min/day</b>");
+    pb.innerHTML = bits.join(" &nbsp;·&nbsp; ");
+
+    function renderPlans() {
+      document.getElementById("plans").innerHTML = PLANS.map(p => `
+        <div class="plan ${selected === p.id ? "sel" : ""}" data-id="${p.id}">
+          ${p.popular ? '<span class="popular">MOST POPULAR</span>' : ""}
+          <span class="radio"></span>
+          <span class="pn"><span class="name">${p.name}</span><br>
+            <span class="old">€${p.old}</span><span>€${p.intro}</span></span>
+          <span class="perday">€${p.perday}<small>per day</small></span>
+        </div>`).join("");
+      document.querySelectorAll(".plan").forEach(el => el.onclick = () => { selected = el.dataset.id; renderPlans(); updateRenew(); });
+    }
+    function updateRenew() {
+      const p = PLANS.find(x => x.id === selected);
+      document.getElementById("renewNote").innerHTML =
+        `You'll be charged €${p.intro} today for your ${p.name.replace(' plan','')} introductory period. ` +
+        `Unless you cancel before it ends, it renews at the regular price automatically. Cancel anytime in your account.`;
+    }
+    renderPlans(); updateRenew();
+
+    // countdown
+    let t = 599; const tm = document.getElementById("timer");
+    setInterval(() => { if (t > 0) t--; const m = String(Math.floor(t/60)).padStart(2,'0'), s = String(t%60).padStart(2,'0');
+      tm.textContent = "Introductory offer expires in " + m + ":" + s; }, 1000);
+
+    document.getElementById("getPlan").onclick = () => {
+      session.selected_plan = selected; session.status = "checkout";
+      localStorage.setItem("ctc_quiz_session", JSON.stringify(session));
+      // Imitation flow: fake payment -> upsells -> thank you -> app.
+      // TODO: replace pay.html with Supabase edge fn `create-subscription` -> Stripe Checkout.
+      location.href = "pay.html";
+    };
+  </script>
+</body>
+</html>

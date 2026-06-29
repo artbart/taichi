@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Join VIP</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="topbar" style="position:relative">
+    <span class="brand" style="margin:0 auto">Chair&nbsp;Tai&nbsp;Chi</span>
+    <a class="skip" id="skip">Skip ›</a>
+  </header>
+  <div id="stephdr"></div>
+
+  <main>
+    <h1 class="q" style="font-size:26px">Be special. Join our VIP list 🛡️</h1>
+    <div class="seats">
+      <span class="s1">Only <b id="seats">17</b> seats left for today!</span>
+      <span class="s2" id="timer">9:56</span>
+    </div>
+
+    <div class="vip-card">
+      <div class="vip-line"><span class="ic">👑</span> Priority customer support</div>
+      <div class="vip-line"><span class="ic">🔔</span> New guided sessions every week</div>
+      <div class="vip-line"><span class="ic">🧘</span> Extra access to chair yoga, pilates &amp; mobility</div>
+      <div class="vip-line"><span class="ic">🎁</span> <b>VIP-only features + a welcome gift</b></div>
+      <div class="offer-foot">
+        <div class="ttl">Total today<small>One-time payment</small></div>
+        <div class="price-tag"><span class="pill-disc">-74%</span><span class="old">€18.99</span><span>€4.99</span></div>
+      </div>
+    </div>
+
+    <div class="cta-bar" style="position:static;background:none;margin-top:14px">
+      <div class="cta-inner"><button class="btn gold" id="join">Join our VIP list</button></div>
+    </div>
+    <p class="fineprint">One-time charge to your account. Refundable per our refund policy.</p>
+  </main>
+
+  <script src="assets/flow.js"></script>
+  <script>
+    document.getElementById("stephdr").innerHTML = FLOW.stepHeader("offer");
+    document.getElementById("join").onclick = () => {
+      FLOW.addItem({ id:"vip", label:"VIP membership (one-time)", amount:4.99, recurring:false });
+      location.href = "thankyou.html";
+    };
+    document.getElementById("skip").onclick = () => { location.href = "thankyou.html"; };
+    // countdown (display only)
+    let t = 596; const tm = document.getElementById("timer");
+    setInterval(() => { if (t>0) t--; tm.textContent = Math.floor(t/60) + ":" + String(t%60).padStart(2,"0"); }, 1000);
+  </script>
+</body>
+</html>
