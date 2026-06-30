@@ -63,6 +63,13 @@ h1.q{font-size:24px;line-height:1.3;margin:8px 0 6px;font-weight:700;text-align:
 .grid .opt .lab{flex:none;padding:12px 14px;font-weight:700}
 .grid .opt .check{display:none}
 
+/* multi-select cards (e.g. pain points): show a checkbox in the corner */
+.grid.cards-multi .opt{position:relative}
+.grid.cards-multi .opt .lab{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.grid.cards-multi .opt .check{display:grid;position:absolute;top:10px;right:10px;background:#fff;border:2px solid var(--line)}
+.grid.cards-multi .opt.sel{border-color:var(--primary);background:var(--primary-soft)}
+.grid.cards-multi .opt.sel .check{background:var(--primary);border-color:var(--primary)}
+
 /* multi-select photo thumbnail */
 .opt .thumb{width:48px;height:48px;border-radius:10px;overflow:hidden;flex:none;background:var(--line)}
 .opt .thumb img{width:100%;height:100%;object-fit:cover;display:block}

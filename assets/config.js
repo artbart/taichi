@@ -125,7 +125,7 @@ window.FUNNEL = {
       title: "Good news — you're eligible!",
       body: "Your answers line up well with a gentle, seated routine. Here's how progress could build over your first weeks." },
 
-    { id: "pain_points", type: "multi", section: "Activity", photos: true,
+    { id: "pain_points", type: "multi", section: "Activity", layout: "cards",
       q: "Are any of the following an issue for you?", sub: "Your plan will adapt to keep you comfortable and safe",
       options: [{ value: "back", label: "Sensitive back" }, { value: "knees", label: "Achy knees" },
         { value: "hips", label: "Tight hips" }],
@@ -262,8 +262,7 @@ window.FUNNEL = {
     { id: "mobility", type: "single", section: "Health & Safety",
       q: "Do you have any physical or mobility restrictions we should know about?",
       sub: "Rest assured, this is just for your safety.",
-      options: [{ value: "yes", label: "Yes" }, { value: "no", label: "No" }, { value: "na", label: "Prefer not to answer" }],
-      safetyNote: "Please adapt any movements to suit your body. We recommend checking with your doctor or physical therapist before starting any new activity." },
+      options: [{ value: "yes", label: "Yes" }, { value: "no", label: "No" }, { value: "na", label: "Prefer not to answer" }] },
 
     { id: "intro_safe", type: "info",
       title: "Prioritizing your health and safety",

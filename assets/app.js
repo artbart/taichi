@@ -118,7 +118,10 @@
     const wrapCls = scr.layout === "cards" ? "grid" : scr.layout === "ld" ? "ld" : "opts";
     if (scr.layout === "ld" && scr.statement) {
       // image card carrying the statement, shown above the option cards
-      root.appendChild(el("div", "ld-card", scr.statement));
+      const card = el("div", "ld-card", scr.statement);
+      // TODO: swap picsum for the real activity/illustration asset per screen
+      card.style.setProperty("--ld-img", `url(${picsum("ld-" + scr.id, 800, 420)})`);
+      root.appendChild(card);
     }
     const box = el("div", wrapCls);
     if (scr.layout === "ld") box.style.gridTemplateColumns = `repeat(${scr.options.length},1fr)`;
@@ -139,7 +142,7 @@
   function rMulti(scr, root) {
     head(scr, root);
     const cur = new Set(S.answers[scr.id] || []);
-    const box = el("div", "opts");
+    const box = el("div", scr.layout === "cards" ? "grid cards-multi" : "opts");
     const baseOpts = scr.options.filter(o => !(o.femaleOnly && S.gender === "male"));
     const opts = baseOpts.concat(scr.noneValue ? [{ value: scr.noneValue, label: scr.noneLabel || "None", emoji: scr.noneEmoji }] : []);
     opts.forEach(o => {
