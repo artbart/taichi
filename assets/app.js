@@ -214,7 +214,7 @@
   function rInfo(scr, root) {
     if (!scr.chart) {
       if (scr.image) {
-        const w = el("div", "info-photo");
+        const w = el("div", "info-photo" + (scr.full ? " full" : ""));
         const img = document.createElement("img"); img.src = scr.image; img.alt = ""; img.loading = "lazy";
         w.appendChild(img); root.appendChild(w);
       } else {

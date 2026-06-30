@@ -162,9 +162,6 @@ window.FUNNEL = {
     { id: "ld_balance", type: "single", section: "Activity", layout: "ld", cardImg: "assets/31.webp",
       q: "Like or dislike?", statement: "Balance",
       options: [{ value: "dislike", label: "Dislike", emoji: "👎" }, { value: "neutral", label: "Neutral", emoji: "😐" }, { value: "like", label: "Like", emoji: "👍" }] },
-    { id: "ld_strength", type: "single", section: "Activity", layout: "ld",
-      q: "Like or dislike?", statement: "Gentle seated strength",
-      options: [{ value: "dislike", label: "Dislike", emoji: "👎" }, { value: "neutral", label: "Neutral", emoji: "😐" }, { value: "like", label: "Like", emoji: "👍" }] },
 
     { id: "projection_2", type: "info", image: "assets/33.webp",
       title: "You'll reach your goal sooner than expected",
@@ -194,7 +191,7 @@ window.FUNNEL = {
         { value: "mixed", label: "Up and down — it depends on the day", emoji: "🟡" },
         { value: "steady", label: "Steady — I usually feel okay", emoji: "🟢" }] },
 
-    { id: "intro_focus", type: "info", image: "assets/38.webp",
+    { id: "intro_focus", type: "info", image: "assets/38.webp", full: true,
       title: "Feel calmer and more focused",
       body: "Regular gentle movement supports energy, focus and emotional steadiness — and it's easy to keep up when it's enjoyable." },
 
