@@ -31,25 +31,25 @@ window.FUNNEL = {
         { value: "memory_focus", label: "Boost memory & focus", img: "assets/4d_focus.webp" },
       ] },
 
-    { id: "intro_solution", type: "info", personalize: true,
+    { id: "intro_solution", type: "info", personalize: true, image: "assets/5.webp",
       title: "This could be a great fit",
       body: "For {genderPlural} in their {decade}, Chair Tai Chi is a gentle way to feel better with minimal effort — around 10–15 minutes a day to start seeing changes." },
 
     { id: "body_now", type: "single", section: "My profile", layout: "cards",
       q: "How would you describe your body?",
-      options: [{ value: "thin", label: "Thin" }, { value: "mid", label: "Mid-sized" },
-        { value: "plump", label: "Plump" }, { value: "plus", label: "Plus-sized" }] },
+      options: [{ value: "thin", label: "Thin", img: "assets/6_thin.webp" }, { value: "mid", label: "Mid-sized", img: "assets/6_mid.webp" },
+        { value: "plump", label: "Plump", img: "assets/6_plump.webp" }, { value: "plus", label: "Plus-sized", img: "assets/6_plus.webp" }] },
 
     { id: "dream_body", type: "single", section: "My profile", layout: "cards",
       q: "What's your “dream body”?",
-      options: [{ value: "slim", label: "Slim" }, { value: "toned", label: "Toned" },
-        { value: "curvy", label: "Curvy" }, { value: "sizes", label: "Few sizes smaller" }] },
+      options: [{ value: "slim", label: "Slim", img: "assets/7_slim.webp" }, { value: "toned", label: "Toned", img: "assets/7_toned.webp" },
+        { value: "curvy", label: "Curvy", img: "assets/7_curvy.webp" }, { value: "sizes", label: "Few sizes smaller", img: "assets/7_smaller.webp" }] },
 
     { id: "target_areas", type: "multi", section: "My profile", photos: true,
       q: "Which areas do you want to focus on?", sub: "Choose all that apply",
-      options: [{ value: "legs", label: "Legs" }, { value: "belly", label: "Belly" },
-        { value: "arms", label: "Arms" }, { value: "butt", label: "Butt" },
-        { value: "face_neck", label: "Face and neck" }] },
+      options: [{ value: "legs", label: "Legs", img: "assets/8_legs.webp" }, { value: "belly", label: "Belly", img: "assets/8_belly.webp" },
+        { value: "arms", label: "Arms", img: "assets/8_arms.webp" }, { value: "butt", label: "Butt", img: "assets/8_butt.webp" },
+        { value: "face_neck", label: "Face and neck", img: "assets/8_neck.webp" }] },
 
     { id: "height", type: "input", section: "My profile",
       q: "What's your height?", sub: "We'll use this to set a sensible, healthy pace.",
@@ -63,15 +63,11 @@ window.FUNNEL = {
       sub: "An estimate will do — you can easily change this later.",
       units: ["kg", "lb"], field: "goal_weight" },
 
-    { id: "intro_smallchange", type: "info",
-      title: "Small changes add up",
-      body: "Even a modest amount of weight loss can support your health and how you feel day to day — gentle, steady progress is what lasts." },
-
-    { id: "projection_1", type: "info", chart: true,
+    { id: "projection_1", type: "info", image: "assets/13.webp",
       title: "You'll get there sooner than you think",
       body: "With a routine matched to you, steady progress is realistic — and we'll keep adapting it as you go." },
 
-    { id: "intro_plan", type: "info", personalize: true,
+    { id: "intro_plan", type: "info", personalize: true, image: "assets/14.webp",
       title: "A goal without a plan is just a wish",
       body: "{genderPlural} in their {decade} often need an approach tailored to their needs. Tell us a little more so we can build a Chair Tai Chi plan that's right for you." },
 
