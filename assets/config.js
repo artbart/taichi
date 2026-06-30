@@ -163,7 +163,7 @@ window.FUNNEL = {
       q: "Like or dislike?", statement: "Balance",
       options: [{ value: "dislike", label: "Dislike", emoji: "👎" }, { value: "neutral", label: "Neutral", emoji: "😐" }, { value: "like", label: "Like", emoji: "👍" }] },
 
-    { id: "projection_2", type: "info", image: "assets/33.webp",
+    { id: "projection_2", type: "info", image: "assets/33.webp", full: true,
       title: "You'll reach your goal sooner than expected",
       body: "With a routine matched to your preferences, steady progress is realistic — and we'll keep adapting it as you go." },
 
@@ -174,7 +174,7 @@ window.FUNNEL = {
         { value: "some", label: "I have some ups and downs", emoji: "😐" },
         { value: "steady", label: "I feel mostly steady", emoji: "😌" }] },
 
-    { id: "intro_stress", type: "info", image: "assets/35.webp",
+    { id: "intro_stress", type: "info", image: "assets/35.webp", full: true,
       title: "Movement and breath calm the mind",
       body: "Slow, mindful movement paired with steady breathing is a well-known way to ease tension and feel more grounded." },
 
