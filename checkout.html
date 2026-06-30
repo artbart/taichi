@@ -5,51 +5,194 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Chair Tai Chi — Your plan</title>
 <link rel="stylesheet" href="assets/style.css">
+<style>
+  body{padding-top:54px}
+  /* sticky top bar with timer + CTA */
+  .co-top{position:fixed;top:0;left:0;right:0;z-index:60;background:#fff;border-bottom:1px solid var(--line)}
+  .co-top-in{max-width:var(--maxw);margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:9px 16px}
+  .co-clock{display:inline-flex;align-items:center;gap:8px;font-weight:800;color:var(--ink)}
+  .co-clock .t{background:var(--primary-soft);color:var(--primary-dark);border-radius:8px;padding:4px 8px;font-variant-numeric:tabular-nums}
+  .co-clock small{display:block;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px}
+  .co-top .btn-sm{background:var(--primary);color:#fff;border:none;border-radius:20px;padding:9px 16px;font-weight:700;font-size:14px;cursor:pointer;text-decoration:none}
+
+  .co{max-width:var(--maxw);margin:0 auto;padding:18px 20px 40px}
+  .co h2.sec-t{font-size:23px;font-weight:800;text-align:center;margin:34px 0 16px}
+  .co h2.sec-t .g{color:var(--primary-dark)}
+
+  /* before / after */
+  .ba2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+  .ba2 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .ba2 .tag{display:block;text-align:center;font-weight:800;font-size:12px;letter-spacing:.5px;padding:8px;color:#fff}
+  .ba2 .before .tag{background:#c0735a}.ba2 .after .tag{background:var(--primary)}
+  .ba2 img{width:100%;aspect-ratio:1/1.05;object-fit:cover;display:block;background:var(--line)}
+  .ba2 .rows{padding:12px 12px 14px}
+  .ba2 .r{font-size:13px;margin-bottom:8px}
+  .ba2 .r b{display:block;font-size:13px;margin-bottom:4px;color:var(--muted);font-weight:600}
+  .bar{height:6px;border-radius:4px;background:var(--line);overflow:hidden}
+  .bar i{display:block;height:100%}
+  .bar.lo i{width:30%}.bar.mid i{width:55%}.bar.hi i{width:90%}
+  .bar.red i{background:#e0795f}.bar.green i{background:var(--primary)}
+
+  /* summary card */
+  .sum{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-top:8px}
+  .sum h3{margin:0 0 4px;font-size:18px;text-align:center}
+  .sum .lead{color:var(--muted);font-size:14px;text-align:center;margin:0 0 16px}
+  .sum .item{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:10px}
+  .sum .item .h{display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:15px}
+  .sum .item .h .v{color:var(--primary-dark)}
+  .bmi-track{position:relative;height:10px;border-radius:6px;margin:14px 4px 6px;
+    background:linear-gradient(90deg,#6fb3e0,#5a9e6f 40%,#e9c45a 70%,#e0795f)}
+  .bmi-track .mk{position:absolute;top:-5px;width:3px;height:20px;background:#1f2a24;border-radius:2px;transform:translateX(-50%)}
+  .bmi-scale{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin:0 2px}
+  .glasses{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;font-size:22px}
+
+  /* pricing */
+  .promo{background:var(--primary-soft);border-radius:14px;padding:12px;display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .promo .code{flex:1;background:#fff;border-radius:8px;padding:10px 12px;font-weight:700;color:var(--primary-dark);font-size:14px}
+  .promo .clk{background:var(--primary);color:#fff;border-radius:8px;padding:8px 12px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums}
+  .promo .clk small{display:block;font-size:9px;font-weight:600}
+  .guarantee{text-align:center;color:var(--primary-dark);font-weight:700;font-size:14px;margin:14px 0}
+  .press{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;color:var(--muted);font-size:13px;font-weight:600;
+    padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:8px 0}
+
+  /* stories + reviews */
+  .story{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:14px}
+  .story .imgs{display:grid;grid-template-columns:1fr 1fr}
+  .story .imgs img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:var(--line)}
+  .story .body{padding:14px}
+  .story .who{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:14px}
+  .story .stars{color:#f0a020;letter-spacing:1px;font-size:13px}
+  .story p{margin:8px 0 0;color:var(--muted);font-size:14px}
+  .rev{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
+  .rev .top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .rev .top img{width:34px;height:34px;border-radius:50%;object-fit:cover}
+  .rev .top .n{font-weight:700;font-size:14px;flex:1}
+  .rev .stars{color:#f0a020;font-size:12px;letter-spacing:1px}
+  .rev p{margin:0;color:var(--muted);font-size:14px}
+
+  .badges{display:flex;justify-content:center;gap:40px;margin:16px 0 4px;text-align:center}
+  .badges .b .ic{font-size:30px}
+  .badges .b .l1{font-size:12px;color:var(--muted);margin-top:4px}
+  .badges .b .l2{font-weight:700;font-size:14px}
+
+  .trustline{display:flex;justify-content:center;gap:8px 22px;flex-wrap:wrap;color:var(--muted);font-size:13px;margin-top:16px}
+</style>
 </head>
 <body>
-  <header class="topbar"><span class="brand">Chair&nbsp;Tai&nbsp;Chi</span></header>
-  <div class="timer" id="timer">Introductory offer expires in 09:59</div>
+  <!-- sticky top -->
+  <div class="co-top">
+    <div class="co-top-in">
+      <span class="co-clock"><span class="t" id="clock">05:00</span><small>OFFER ENDS</small></span>
+      <a class="btn-sm" href="#pricing">Get my plan</a>
+    </div>
+  </div>
 
-  <main class="co-section">
-    <h1 class="q" id="headline">Your plan is ready</h1>
+  <main class="co">
+    <h2 class="sec-t" id="headline">Your plan is ready</h2>
 
-    <div class="summary-card">
-      <div class="ba">
-        <div class="col"><h4>NOW</h4><div class="metric">Energy: <b>Low</b></div><div class="metric">Balance: <b>Could improve</b></div></div>
-        <div class="col"><h4>GOAL</h4><div class="metric">Energy: <b>High</b></div><div class="metric">Balance: <b>Steadier</b></div></div>
+    <!-- before / after -->
+    <div class="ba2">
+      <div class="card before">
+        <span class="tag">NOW</span>
+        <img src="https://picsum.photos/seed/ctc-before/360/378" alt="">
+        <div class="rows">
+          <div class="r"><b>Energy levels</b><div class="bar lo red"><i></i></div></div>
+          <div class="r"><b>Steadiness</b><div class="bar lo red"><i></i></div></div>
+        </div>
+      </div>
+      <div class="card after">
+        <span class="tag">GOAL</span>
+        <img src="https://picsum.photos/seed/ctc-after/360/378" alt="">
+        <div class="rows">
+          <div class="r"><b>Energy levels</b><div class="bar hi green"><i></i></div></div>
+          <div class="r"><b>Steadiness</b><div class="bar hi green"><i></i></div></div>
+        </div>
       </div>
     </div>
 
-    <div class="summary-card" id="personal">
-      <strong>Your personal summary</strong>
-      <div id="personalBody" class="note" style="margin-top:10px"></div>
+    <!-- personal summary -->
+    <div class="sum">
+      <h3>Your personal summary</h3>
+      <p class="lead">Based on your answers, here's a quick snapshot to guide your plan.</p>
+
+      <div class="item" id="bmiItem">
+        <div class="h"><span>Current BMI</span><span class="v" id="bmiVal">—</span></div>
+        <div class="bmi-track"><span class="mk" id="bmiMk" style="left:50%"></span></div>
+        <div class="bmi-scale"><span>Underweight</span><span>Healthy</span><span>Overweight</span><span>Higher</span></div>
+        <div class="note" id="bmiCat" style="margin-top:8px"></div>
+      </div>
+
+      <div class="item">
+        <div class="h"><span>Recommended session length</span><span class="v">7 min/day</span></div>
+        <div class="note" style="margin-top:6px">Short, gentle daily practice to start — easy to keep up.</div>
+      </div>
+
+      <div class="item">
+        <div class="h"><span>Daily water</span><span class="v">~6–8 glasses</span></div>
+        <div class="glasses">💧💧💧💧💧💧💧💧</div>
+        <div class="note" style="margin-top:4px">Stay hydrated when you move — a simple habit that helps.</div>
+      </div>
     </div>
 
-    <h2 class="q" style="font-size:20px">Your plan includes</h2>
-    <ul class="bullets" style="max-width:none">
-      <li>Personalized seated Chair Tai Chi routine</li>
-      <li>7–15 minute low-impact daily sessions</li>
-      <li>Beginner-friendly balance &amp; mobility work</li>
-      <li>Joint-friendly, fully seated movement</li>
-      <li>Progress tracking</li>
-      <li>Simple, optional nutrition guidance</li>
-      <li>24/7 wellness assistant</li>
-    </ul>
-
-    <h2 class="q" style="font-size:20px;margin-top:24px">Choose your plan</h2>
+    <!-- pricing -->
+    <h2 class="sec-t" id="pricing">Get visible results in <span class="g">4 weeks</span></h2>
+    <div class="promo">
+      <span class="code">✓ Discount applied</span>
+      <span class="clk" id="clock2">05:00<small>MIN&nbsp;&nbsp;SEC</small></span>
+    </div>
     <div id="plans"></div>
-
-    <p class="guarantee">30-day money-back guarantee</p>
+    <p class="guarantee">🛡️ 30-day money-back guarantee</p>
     <div class="cta-bar" style="position:static;background:none;padding:0 0 8px">
       <div class="cta-inner"><button class="btn" id="getPlan">Get my plan</button></div>
     </div>
+    <p class="note" id="renewNote" style="text-align:center"></p>
 
-    <h2 class="q" style="font-size:20px;margin-top:30px">What members say</h2>
-    <div class="review">“I can do it from my armchair, and I genuinely feel steadier walking around the house.”<b>Margaret, 64</b></div>
-    <div class="review">“Short sessions I can keep up with. My posture and mood have both improved.”<b>Patricia, 67</b></div>
-    <div class="review">“Gentle but it works. My joints feel better and I sleep more soundly.”<b>Joan, 58</b></div>
+    <!-- trust (neutral, no false press claims) -->
+    <div class="press">
+      <span>Gentle &amp; low-impact</span><span>Made for 50+</span><span>Follow along at home</span><span>Cancel anytime</span>
+    </div>
 
-    <p class="note" id="renewNote"></p>
+    <!-- success stories (illustrative; original copy) -->
+    <h2 class="sec-t">Member stories</h2>
+    <div class="story">
+      <div class="imgs"><img src="https://picsum.photos/seed/ctc-s1a/300/300" alt=""><img src="https://picsum.photos/seed/ctc-s1b/300/300" alt=""></div>
+      <div class="body">
+        <div class="who"><span>Margaret, 64</span><span class="stars">★★★★★</span></div>
+        <p>"I can follow along from my armchair. After a few weeks I feel steadier moving around the house."</p>
+      </div>
+    </div>
+    <div class="story">
+      <div class="imgs"><img src="https://picsum.photos/seed/ctc-s2a/300/300" alt=""><img src="https://picsum.photos/seed/ctc-s2b/300/300" alt=""></div>
+      <div class="body">
+        <div class="who"><span>Patricia, 67</span><span class="stars">★★★★★</span></div>
+        <p>"Short sessions I can actually keep up with. My posture and mood have both improved."</p>
+      </div>
+    </div>
+
+    <!-- reviews -->
+    <h2 class="sec-t">Customer reviews</h2>
+    <div class="rev">
+      <div class="top"><img src="https://picsum.photos/seed/ctc-r1/60/60" alt=""><span class="n">Brenda R.</span><span class="stars">★★★★★</span></div>
+      <p>"I never write reviews, but this is easy to follow and I look forward to it. I feel more confident on my feet."</p>
+    </div>
+    <div class="rev">
+      <div class="top"><img src="https://picsum.photos/seed/ctc-r2/60/60" alt=""><span class="n">Sandra J.</span><span class="stars">★★★★★</span></div>
+      <p>"No more stiff joints first thing in the morning. Gentle, but it really does something."</p>
+    </div>
+    <div class="rev">
+      <div class="top"><img src="https://picsum.photos/seed/ctc-r3/60/60" alt=""><span class="n">Amelia C.</span><span class="stars">★★★★★</span></div>
+      <p>"Calmer, steadier, and my friends say I seem more energetic. Easy to fit into my day."</p>
+    </div>
+
+    <!-- results badges -->
+    <div class="badges">
+      <div class="b"><div class="ic">🎯</div><div class="l1">Perfect for</div><div class="l2">Ages 50+</div></div>
+      <div class="b"><div class="ic">🌿</div><div class="l1">Goal</div><div class="l2">Balance &amp; calm</div></div>
+    </div>
+
+    <div class="cta-bar" style="position:static;background:none;padding:8px 0">
+      <div class="cta-inner"><button class="btn" id="getPlan2">Get my plan</button></div>
+    </div>
   </main>
 
   <p class="disclaimer">This is a general wellness and movement program. It is not medical advice and is not
@@ -57,7 +200,6 @@
     a new activity program, especially if you have a medical condition.</p>
 
   <script>
-    // Pricing mirrors the captured chair-taichi funnel (intro -> auto-renew). EUR.
     const PLANS = [
       { id: "1w",  name: "1-week plan",  old: "21.99", intro: "5.19",  perday: "0.74" },
       { id: "4w",  name: "4-week plan",  old: "49.95", intro: "9.99",  perday: "0.36", popular: true },
@@ -66,15 +208,22 @@
     let session = {}; try { session = JSON.parse(localStorage.getItem("ctc_quiz_session")) || {}; } catch (e) {}
     let selected = "4w";
 
-    // headline + personal summary
     if (session.name) document.getElementById("headline").textContent = session.name + ", your plan is ready";
-    const pb = document.getElementById("personalBody");
-    const bits = [];
-    if (session.bmi) bits.push("Current BMI: <b>" + session.bmi + "</b>");
-    if (session.age_band) bits.push("Age group: <b>" + session.age_band.replace('-', '–') + "</b>");
-    if (session.weight_kg && session.goal_weight_kg) bits.push("Goal: <b>" + session.weight_kg + "kg → " + session.goal_weight_kg + "kg</b>");
-    bits.push("Recommended session length: <b>7–15 min/day</b>");
-    pb.innerHTML = bits.join(" &nbsp;·&nbsp; ");
+
+    // BMI snapshot
+    (function(){
+      const bmi = session.bmi;
+      if (bmi) {
+        document.getElementById("bmiVal").textContent = bmi;
+        // map BMI ~16..40 to 0..100%
+        const pct = Math.max(2, Math.min(98, ((bmi - 16) / (40 - 16)) * 100));
+        document.getElementById("bmiMk").style.left = pct + "%";
+        const cat = bmi < 18.5 ? "Underweight" : bmi < 25 ? "Healthy range" : bmi < 30 ? "Overweight" : "Higher range";
+        document.getElementById("bmiCat").textContent = "Your category: " + cat + ". A gentle, steady routine is a good fit.";
+      } else {
+        document.getElementById("bmiItem").style.display = "none";
+      }
+    })();
 
     function renderPlans() {
       document.getElementById("plans").innerHTML = PLANS.map(p => `
@@ -91,22 +240,23 @@
       const p = PLANS.find(x => x.id === selected);
       document.getElementById("renewNote").innerHTML =
         `You'll be charged €${p.intro} today for your ${p.name.replace(' plan','')} introductory period. ` +
-        `Unless you cancel before it ends, it renews at the regular price automatically. Cancel anytime in your account.`;
+        `Unless you cancel before it ends, it renews at the regular price. Cancel anytime in your account.`;
     }
     renderPlans(); updateRenew();
 
-    // countdown
-    let t = 599; const tm = document.getElementById("timer");
+    // countdown (both clocks)
+    let t = 300;
     setInterval(() => { if (t > 0) t--; const m = String(Math.floor(t/60)).padStart(2,'0'), s = String(t%60).padStart(2,'0');
-      tm.textContent = "Introductory offer expires in " + m + ":" + s; }, 1000);
+      document.getElementById("clock").textContent = m + ":" + s;
+      document.getElementById("clock2").innerHTML = m + ":" + s + "<small>MIN&nbsp;&nbsp;SEC</small>"; }, 1000);
 
-    document.getElementById("getPlan").onclick = () => {
+    function go() {
       session.selected_plan = selected; session.status = "checkout";
       localStorage.setItem("ctc_quiz_session", JSON.stringify(session));
-      // Imitation flow: fake payment -> upsells -> thank you -> app.
-      // TODO: replace pay.html with Supabase edge fn `create-subscription` -> Stripe Checkout.
       location.href = "pay.html";
-    };
+    }
+    document.getElementById("getPlan").onclick = go;
+    document.getElementById("getPlan2").onclick = go;
   </script>
   <script src="assets/testbar.js?v=1"></script>
 </body>
