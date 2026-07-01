@@ -364,6 +364,9 @@ window.FUNNEL = {
       options: [{ value: "morning", label: "Morning" }, { value: "night", label: "Night" }, { value: "depends", label: "It depends" }] },
 
     // ===================== Capture =====================
+    { id: "loader_plan", type: "loader", title: "Creating your personalized action plan…",
+      steps: ["Analyzing Body Parameters", "Activity Preferences", "Health & Safety", "Generating Your Action Plan"] },
+
     { id: "email", type: "email", title: "Your action plan is ready",
       sub: "Enter your email to get your personal Chair Tai Chi plan." },
 
