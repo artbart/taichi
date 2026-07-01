@@ -44,6 +44,9 @@
     background:linear-gradient(90deg,#6fb3e0,#5a9e6f 40%,#e9c45a 70%,#e0795f)}
   .bmi-track .mk{position:absolute;top:-5px;width:3px;height:20px;background:#1f2a24;border-radius:2px;transform:translateX(-50%)}
   .bmi-scale{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin:0 2px}
+  .sum .item .v.red{color:#e0553f}
+  .meta-alert{margin-top:10px;background:#fbeae7;border-radius:10px;padding:10px 12px;font-size:14px;color:var(--ink);display:flex;align-items:center;gap:8px}
+  .meta-alert .mi{color:#e0553f;font-weight:700}
   .glasses{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;font-size:22px}
 
   /* pricing */
@@ -59,6 +62,7 @@
   .story{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:14px}
   .story .imgs{display:grid;grid-template-columns:1fr 1fr}
   .story .imgs img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:var(--line)}
+  .story .ba-img{width:100%;display:block;background:var(--line)}
   .story .body{padding:14px}
   .story .who{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:14px}
   .story .stars{color:#f0a020;letter-spacing:1px;font-size:13px}
@@ -93,16 +97,16 @@
     <!-- before / after -->
     <div class="ba2">
       <div class="card before">
-        <span class="tag">NOW</span>
-        <div class="ph" style="background-image:url(https://picsum.photos/seed/ctc-before/360/378)"></div>
+        <span class="tag">BEFORE</span>
+        <div class="ph" style="background-image:url(assets/checkout_before.jpg)"></div>
         <div class="rows">
           <div class="r"><b>Energy levels</b><div class="bar lo red"><i></i></div></div>
           <div class="r"><b>Steadiness</b><div class="bar lo red"><i></i></div></div>
         </div>
       </div>
       <div class="card after">
-        <span class="tag">GOAL</span>
-        <div class="ph" style="background-image:url(https://picsum.photos/seed/ctc-after/360/378)"></div>
+        <span class="tag">AFTER</span>
+        <div class="ph" style="background-image:url(assets/checkout_after.jpg)"></div>
         <div class="rows">
           <div class="r"><b>Energy levels</b><div class="bar hi green"><i></i></div></div>
           <div class="r"><b>Steadiness</b><div class="bar hi green"><i></i></div></div>
@@ -120,6 +124,11 @@
         <div class="bmi-track"><span class="mk" id="bmiMk" style="left:50%"></span></div>
         <div class="bmi-scale"><span>Underweight</span><span>Healthy</span><span>Overweight</span><span>Higher</span></div>
         <div class="note" id="bmiCat" style="margin-top:8px"></div>
+      </div>
+
+      <div class="item">
+        <div class="h"><span>Metabolic age</span><span class="v red" id="metaVal">—</span></div>
+        <div class="meta-alert"><span class="mi">ⓘ</span> Your metabolism is: <b>Slow</b></div>
       </div>
 
       <div class="item">
@@ -149,22 +158,22 @@
 
     <!-- trust (neutral, no false press claims) -->
     <div class="press">
-      <span>Gentle &amp; low-impact</span><span>Made for 50+</span><span>Follow along at home</span><span>Cancel anytime</span>
+      <span>Gentle &amp; low-impact</span><span>Perfect for 40+</span><span>Follow along at home</span><span>Cancel anytime</span>
     </div>
 
     <!-- success stories (illustrative; original copy) -->
     <h2 class="sec-t">Member stories</h2>
     <div class="story">
-      <div class="imgs"><img src="https://picsum.photos/seed/ctc-s1a/300/300" alt=""><img src="https://picsum.photos/seed/ctc-s1b/300/300" alt=""></div>
+      <img class="ba-img" src="assets/ba_1.webp" alt="">
       <div class="body">
-        <div class="who"><span>Margaret, 64</span><span class="stars">★★★★★</span></div>
+        <div class="who"><span>Margaret, 43</span><span class="stars">★★★★★</span></div>
         <p>"I can follow along from my armchair. After a few weeks I feel steadier moving around the house."</p>
       </div>
     </div>
     <div class="story">
-      <div class="imgs"><img src="https://picsum.photos/seed/ctc-s2a/300/300" alt=""><img src="https://picsum.photos/seed/ctc-s2b/300/300" alt=""></div>
+      <img class="ba-img" src="assets/ba_2.webp" alt="">
       <div class="body">
-        <div class="who"><span>Patricia, 67</span><span class="stars">★★★★★</span></div>
+        <div class="who"><span>Patricia, 62</span><span class="stars">★★★★★</span></div>
         <p>"Short sessions I can actually keep up with. My posture and mood have both improved."</p>
       </div>
     </div>
@@ -172,21 +181,21 @@
     <!-- reviews -->
     <h2 class="sec-t">Customer reviews</h2>
     <div class="rev">
-      <div class="top"><img src="https://picsum.photos/seed/ctc-r1/60/60" alt=""><span class="n">Brenda R.</span><span class="stars">★★★★★</span></div>
+      <div class="top"><img src="assets/checkout_01.webp" alt=""><span class="n">Brenda</span><span class="stars">★★★★★</span></div>
       <p>"I never write reviews, but this is easy to follow and I look forward to it. I feel more confident on my feet."</p>
     </div>
     <div class="rev">
-      <div class="top"><img src="https://picsum.photos/seed/ctc-r2/60/60" alt=""><span class="n">Sandra J.</span><span class="stars">★★★★★</span></div>
+      <div class="top"><img src="assets/checkout_02.webp" alt=""><span class="n">Sandra</span><span class="stars">★★★★★</span></div>
       <p>"No more stiff joints first thing in the morning. Gentle, but it really does something."</p>
     </div>
     <div class="rev">
-      <div class="top"><img src="https://picsum.photos/seed/ctc-r3/60/60" alt=""><span class="n">Amelia C.</span><span class="stars">★★★★★</span></div>
+      <div class="top"><img src="assets/checkout_03.webp" alt=""><span class="n">Amelia</span><span class="stars">★★★★★</span></div>
       <p>"Calmer, steadier, and my friends say I seem more energetic. Easy to fit into my day."</p>
     </div>
 
     <!-- results badges -->
     <div class="badges">
-      <div class="b"><div class="ic">🎯</div><div class="l1">Perfect for</div><div class="l2">Ages 50+</div></div>
+      <div class="b"><div class="ic">🎯</div><div class="l1">Perfect for</div><div class="l2">Ages 40+</div></div>
       <div class="b"><div class="ic">🌿</div><div class="l1">Goal</div><div class="l2">Balance &amp; calm</div></div>
     </div>
 
@@ -223,6 +232,14 @@
       } else {
         document.getElementById("bmiItem").style.display = "none";
       }
+    })();
+
+    // Metabolic age: age-group lower bound + 2 (illustrative). Always shows "Slow".
+    (function(){
+      const band = String(session.age_band || "");
+      const m = band.match(/\d+/);
+      const base = m ? parseInt(m[0], 10) : 45;
+      document.getElementById("metaVal").textContent = (base + 2) + " years";
     })();
 
     function renderPlans() {
