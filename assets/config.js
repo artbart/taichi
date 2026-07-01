@@ -1,21 +1,21 @@
 /* Chair Tai Chi funnel — screen config.
- * Step ORDER, element TYPES, and QUESTION/OPTION labels mirror the captured digestiplan
- * chair funnel (88 screenshots) 1:1. Interstitial ("info") titles/bodies are ORIGINAL wording
- * (no verbatim marketing prose, no fabricated stats, no false sources).
- * Flow: gender (gate) -> age (gate) -> these screens -> loader -> email -> name -> goals -> checkout.
+ * SEQUENCE + functional question/option labels mirror the captured digestiplan chair funnel 1:1
+ * (see "Digesti quiz — copy spec"). Interstitial ("info") titles/bodies are ORIGINAL wording:
+ * no verbatim marketing prose, no fabricated stats, no fake sources, no invented testimonials/counts.
+ * Flow: gender (gate) -> age (gate) -> these screens -> email -> name -> goals -> checkout.
  *
- * Screen types: single | multi | input | info | loader | email | name | goals
- * Flags: section, layout("cards"|"ld"), statement, sub, noneValue/noneLabel/noneEmoji, computeBMI,
- *        photos(bool), chart(bool), femaleOnly(bool, skipped when gender==='male'), personalize(bool),
- *        safetyNote.
+ * Types: single | multi | input | info | loader | email | name | goals
+ * Flags: section, layout("cards"|"ld"), statement, sub, image, full, cardImg, photos, chart,
+ *        femaleOnly, personalize, safetyNote, computeBMI, units, field, figure,
+ *        noneValue/noneLabel/noneEmoji/noneImg, per, cards, options[].img
  */
 window.FUNNEL = {
   product: "chair-taichi",
   brand: "Chair Tai Chi",
   screens: [
-    // ============ My profile ============
-    { id: "tried_before", type: "single", section: "My profile",
-      q: "Have you tried Chair Tai Chi before?", figure: "assets/2_tried.webp",
+    // ===================== My profile =====================
+    { id: "tried_before", type: "single", section: "My profile", figure: "assets/2_tried.webp",
+      q: "Have you tried Chair Tai Chi before?",
       options: [{ value: "yes", label: "Yes" }, { value: "no", label: "No" }] },
 
     { id: "intro_encourage", type: "info", image: "assets/3.webp",
@@ -52,7 +52,7 @@ window.FUNNEL = {
         { value: "face_neck", label: "Face and neck", img: "assets/8_neck.webp" }] },
 
     { id: "height", type: "input", section: "My profile",
-      q: "What's your height?", sub: "We'll use this to set a sensible, healthy pace.",
+      q: "What's your height?", sub: "We'll use this information to determine your ideal weight loss pace",
       units: ["cm", "ft"], field: "height" },
 
     { id: "weight", type: "input", section: "My profile",
@@ -60,8 +60,12 @@ window.FUNNEL = {
 
     { id: "goal_weight", type: "input", section: "My profile",
       q: "Got it! And what's your goal weight?",
-      sub: "An estimate will do — you can easily change this later.",
+      sub: "An estimate will do - you can easily change this later.",
       units: ["kg", "lb"], field: "goal_weight" },
+
+    { id: "intro_smallchange", type: "info", image: "assets/bodies_2b.jpg",
+      title: "Small steps, real results",
+      body: "Even small, steady changes in how you move can add up over time. Gentle daily practice is the kind of habit that actually sticks." },
 
     { id: "projection_1", type: "info", image: "assets/13.webp",
       title: "You'll get there sooner than you think",
@@ -71,7 +75,7 @@ window.FUNNEL = {
       title: "A goal without a plan is just a wish",
       body: "{genderPlural} in their {decade} often need an approach tailored to their needs. Tell us a little more so we can build a Chair Tai Chi plan that's right for you." },
 
-    // ============ Activity ============
+    // ===================== Activity =====================
     { id: "last_in_shape", type: "single", section: "Activity",
       q: "When were you last in the best shape of your life?",
       options: [{ value: "lt1", label: "Less than a year ago", emoji: "🤔" },
@@ -95,8 +99,8 @@ window.FUNNEL = {
 
     { id: "walks_freq", type: "single", section: "Activity",
       q: "How often do you go for walks?",
-      options: [{ value: "daily", label: "Almost every day" }, { value: "3to4", label: "3–4 times per week" },
-        { value: "1to2", label: "1–2 times per week" }, { value: "rare", label: "Once a month or less" }] },
+      options: [{ value: "daily", label: "Almost every day" }, { value: "3to4", label: "3-4 times per week" },
+        { value: "1to2", label: "1-2 times per week" }, { value: "rare", label: "Once a month or less" }] },
 
     { id: "intro_effective", type: "info", image: "assets/18.webp",
       title: "Gentle doesn't mean ineffective",
@@ -109,12 +113,12 @@ window.FUNNEL = {
 
     { id: "relate_hard", type: "single", section: "Activity", layout: "ld", cardImg: "assets/20_excersize.webp",
       q: "Do you relate to the following statement?",
-      statement: "I tend to give up when workouts feel too hard or boring",
+      statement: "I tend to give up easily when exercises are too hard or boring",
       options: [{ value: "no", label: "No", emoji: "🚫" }, { value: "yes", label: "Yes", emoji: "✅" }] },
 
     { id: "relate_progress", type: "single", section: "Activity", layout: "ld", cardImg: "assets/21_workout.webp",
       q: "Do you relate to the following statement?",
-      statement: "I'm not sure how to choose workouts that suit me",
+      statement: "I'm not sure how to choose workouts that are suitable for me",
       options: [{ value: "no", label: "No", emoji: "🚫" }, { value: "yes", label: "Yes", emoji: "✅" }] },
 
     { id: "intro_eligible", type: "info", chart: true,
@@ -122,7 +126,7 @@ window.FUNNEL = {
       body: "Your answers line up well with a gentle, seated routine. Here's how progress could build over your first weeks." },
 
     { id: "pain_points", type: "multi", section: "Activity", layout: "cards",
-      q: "Are any of the following an issue for you?", sub: "Your plan will adapt to keep you comfortable and safe",
+      q: "Are any of the following an issue for you?", sub: "Your plan will address these to ensure your comfort and safety",
       options: [{ value: "back", label: "Sensitive back", img: "assets/23_back.webp" },
         { value: "knees", label: "Achy knees", img: "assets/23_knees.webp" },
         { value: "hips", label: "Tight hips", img: "assets/23_hips.webp" }],
@@ -144,13 +148,13 @@ window.FUNNEL = {
     { id: "steps_need", type: "single", section: "Activity",
       q: "How many steps do you think you need in a day?",
       options: [{ value: "easy", label: "Easy: <5K steps", emoji: "👌" },
-        { value: "medium", label: "Medium: 5–10K steps", emoji: "🔥" },
+        { value: "medium", label: "Medium: 5-10K steps", emoji: "🔥" },
         { value: "hard", label: "Hard: >10K steps", emoji: "🏅" },
         { value: "unsure", label: "I'm not sure", emoji: "🤷" }] },
 
     { id: "intro_lowdose", type: "info", image: "assets/28.webp",
-      title: "You may need less than you think",
-      body: "Short, gentle daily practice is easier to keep up than long, occasional workouts — and consistency is what moves the needle." },
+      title: "You don't need to be flexible",
+      body: "A common myth stops many people from ever starting. Chair Tai Chi is designed for every level — you build strength, balance and focus gradually, right from your chair." },
 
     // like / dislike series (image card + 👎/😐/👍)
     { id: "ld_mobility", type: "single", section: "Activity", layout: "ld", cardImg: "assets/29.webp",
@@ -162,12 +166,15 @@ window.FUNNEL = {
     { id: "ld_balance", type: "single", section: "Activity", layout: "ld", cardImg: "assets/31.webp",
       q: "Like or dislike?", statement: "Balance",
       options: [{ value: "dislike", label: "Dislike", emoji: "👎" }, { value: "neutral", label: "Neutral", emoji: "😐" }, { value: "like", label: "Like", emoji: "👍" }] },
+    { id: "ld_strength", type: "single", section: "Activity", layout: "ld", cardImg: "assets/1_age.webp",
+      q: "Like or dislike?", statement: "Gentle seated strength",
+      options: [{ value: "dislike", label: "Dislike", emoji: "👎" }, { value: "neutral", label: "Neutral", emoji: "😐" }, { value: "like", label: "Like", emoji: "👍" }] },
 
     { id: "projection_2", type: "info", image: "assets/33.webp", full: true,
       title: "You'll reach your goal sooner than expected",
       body: "With a routine matched to your preferences, steady progress is realistic — and we'll keep adapting it as you go." },
 
-    // ============ Lifestyle ============
+    // ===================== Lifestyle =====================
     { id: "tension", type: "single", section: "Lifestyle",
       q: "Do you ever feel mentally tense or on edge?",
       options: [{ value: "lots", label: "I feel that a lot lately", emoji: "😫" },
@@ -179,7 +186,7 @@ window.FUNNEL = {
       body: "Slow, mindful movement paired with steady breathing is a well-known way to ease tension and feel more grounded." },
 
     { id: "water", type: "single", section: "Lifestyle",
-      q: "What is your daily water intake?", sub: "It's important to stay hydrated when you move.",
+      q: "What is your daily water intake?", sub: "It's important to consume enough fluid when exercising",
       options: [{ value: "coffee", label: "I mainly drink coffee or tea", emoji: "☕" },
         { value: "low", label: "About 2 glasses", emoji: "💧" },
         { value: "mid", label: "2 to 6 glasses", emoji: "💦" },
@@ -187,9 +194,9 @@ window.FUNNEL = {
 
     { id: "mood", type: "single", section: "Lifestyle",
       q: "How's your mood most days?",
-      options: [{ value: "low", label: "Low — I often feel down or irritable", emoji: "🔴" },
-        { value: "mixed", label: "Up and down — it depends on the day", emoji: "🟡" },
-        { value: "steady", label: "Steady — I usually feel okay", emoji: "🟢" }] },
+      options: [{ value: "low", label: "Low—I often feel down or irritable", emoji: "🔴" },
+        { value: "mixed", label: "Up and down—it depends on the day", emoji: "🟡" },
+        { value: "steady", label: "Steady—I usually feel okay", emoji: "🟢" }] },
 
     { id: "intro_focus", type: "info", image: "assets/38.webp", full: true,
       title: "Feel calmer and more focused",
@@ -248,15 +255,19 @@ window.FUNNEL = {
       title: "Look after your brain, not just your body",
       body: "Staying gently active is associated with sharper memory and better brain health as we age. A short daily routine is one of the simplest ways to help protect your mind for the years ahead." },
 
-    // ============ Health & Safety ============
+    // ===================== Health & Safety =====================
     { id: "medications", type: "single", section: "Health & Safety",
-      q: "Are you taking any medications?", sub: "Rest assured, this is just for your safety.",
+      q: "Are you taking any medications?", sub: "Rest assured this information is for your safety.",
       options: [{ value: "yes", label: "Yes" }, { value: "no", label: "No" }] },
 
     { id: "mobility", type: "single", section: "Health & Safety",
       q: "Do you have any physical or mobility restrictions we should know about?",
-      sub: "Rest assured, this is just for your safety.",
+      sub: "Rest assured this information is for your safety.",
       options: [{ value: "yes", label: "Yes" }, { value: "no", label: "No" }, { value: "na", label: "Prefer not to answer" }] },
+
+    { id: "intro_safe", type: "info", image: "assets/bg_1.jpg",
+      title: "Your safety comes first",
+      body: "Always adapt movements to suit your body. If anything gives you concern, check with your doctor or physical therapist before starting a new activity." },
 
     { id: "menopause", type: "single", section: "Health & Safety", femaleOnly: true,
       q: "Have you gone through menopause?", sub: "Hormonal changes can impact your metabolism and nutritional needs.",
@@ -264,10 +275,33 @@ window.FUNNEL = {
         { value: "passed", label: "Already passed it" }, { value: "unsure", label: "Not sure" },
         { value: "na", label: "Prefer not to answer" }] },
 
-    // ============ Almost there ============
-    { id: "intro_almost", type: "loader", title: "Almost done…",
-      steps: ["Reviewing your answers", "Personalizing your plan"] },
+    { id: "intro_menopause_weight", type: "info", image: "assets/57b.png", femaleOnly: true,
+      title: "Support your body through midlife changes",
+      body: "Hormonal shifts around menopause can change how your body stores energy and make weight feel harder to manage. Gentle daily movement, paired with simple nutrition guidance, is a supportive way to feel more in control." },
 
+    // ===================== Plan generation (mid-funnel loader) =====================
+    { id: "loader", type: "loader", title: "Just a moment...", sub: "Getting things ready for you", per: 1600,
+      cards: [
+        { img: "assets/bodies_2b.jpg", text: "Built with care, for how you move" },
+        { img: "assets/3.webp", text: "We focus on how your body feels — not dieting" },
+        { img: "assets/5.webp", text: "Small, steady habits are what last" },
+        { img: "assets/29.webp", text: "A plan you can actually keep up with" },
+        { img: "assets/43b.jpg", text: "Just follow your plan, one short session at a time" },
+        { img: "assets/38.webp", text: "It only takes a few minutes a day" },
+        { img: "assets/57b.png", text: "Off days are completely okay" },
+        { img: "assets/41.webp", text: "No one's perfect — we'll help you keep going" },
+        { img: "assets/24.webp", text: "We'll help you get back on track" },
+      ] },
+
+    { id: "intro_goodhands", type: "info", image: "assets/bodies_2b.jpg",
+      title: "You're in good hands",
+      body: "We'll take care of the plan while you take care of yourself — with gentle guidance every step of the way." },
+
+    { id: "intro_almost", type: "info", image: "assets/3.webp",
+      title: "Almost done!",
+      body: "You're moments away from your personalized plan. Let's finish with what keeps you motivated." },
+
+    // ===================== Almost there =====================
     { id: "main_reason", type: "multi", section: "Almost there",
       q: "What's your main reason for wanting to get in shape?", sub: "Choose all that apply",
       options: [{ value: "confident", label: "Feel more confident in my body" },
@@ -297,12 +331,13 @@ window.FUNNEL = {
         { value: "coaching", label: "Ineffective coaching" },
         { value: "none", label: "I didn't face any obstacles" }, { value: "other", label: "Other" }] },
 
-    { id: "intro_sustainable", type: "info", image: "assets/57b.png", femaleOnly: true,
-      title: "Support your body through midlife changes",
-      body: "Hormonal shifts around menopause can change how your body stores energy and make weight feel harder to manage. Gentle daily movement, paired with simple nutrition guidance, is a supportive way to feel more in control of your wellness goals." },
+    { id: "intro_sustainable", type: "info", image: "assets/bodies_2b.jpg",
+      title: "Why people give up — and how we avoid it",
+      body: "Most people quit because they start too big, too fast. Our plan does the opposite — small, sustainable steps you can keep for good." },
 
     { id: "explore", type: "multi", section: "Almost there",
-      q: "While we customize your journey, what else do you want to explore?", sub: "Choose all that apply",
+      q: "While we're customizing your journey, what else do you want to explore?",
+      sub: "Our holistic approach goes beyond weight loss to improve your well-being, mood, and health.",
       options: [{ value: "energy", label: "Upping my energy levels" }, { value: "habits", label: "Cultivating healthy behaviors" },
         { value: "digestion", label: "Understand digestion" }, { value: "stress", label: "Reducing stress" },
         { value: "flex", label: "Improving flexibility" }, { value: "posture", label: "Getting better posture" },
@@ -313,7 +348,7 @@ window.FUNNEL = {
       options: [{ value: "fast", label: "As quickly as possible" }, { value: "slow", label: "Slow and steady does it" },
         { value: "between", label: "Somewhere between the two" }] },
 
-    { id: "intro_paced", type: "info",
+    { id: "intro_paced", type: "info", image: "assets/5.webp",
       title: "Perfect — we've matched your pace",
       body: "And it doesn't stop here: we'll adapt your plan as your body and activity level change throughout your journey." },
 
@@ -325,20 +360,7 @@ window.FUNNEL = {
       q: "When do you feel most “on” — morning or night?",
       options: [{ value: "morning", label: "Morning" }, { value: "night", label: "Night" }, { value: "depends", label: "It depends" }] },
 
-    // ============ Plan generation + capture ============
-    { id: "loader", type: "loader", title: "Just a moment…", sub: "Getting things ready for you", per: 1600,
-      cards: [
-        { img: "assets/bodies_2b.jpg", text: "Built with care, for how you move" },
-        { img: "assets/3.webp", text: "We focus on how your body feels — not dieting" },
-        { img: "assets/5.webp", text: "Small, steady habits are what last" },
-        { img: "assets/29.webp", text: "A plan you can actually keep up with" },
-        { img: "assets/43b.jpg", text: "Just follow your plan, one short session at a time" },
-        { img: "assets/38.webp", text: "It only takes a few minutes a day" },
-        { img: "assets/57b.png", text: "Off days are completely okay" },
-        { img: "assets/41.webp", text: "No one's perfect — we'll help you keep going" },
-        { img: "assets/24.webp", text: "We'll help you get back on track" },
-      ] },
-
+    // ===================== Capture =====================
     { id: "email", type: "email", title: "Your action plan is ready",
       sub: "Enter your email to get your personal Chair Tai Chi plan." },
 
